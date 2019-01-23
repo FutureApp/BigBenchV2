@@ -13,7 +13,7 @@ set dbName=BigBenchV2;
 -- set table names as variables
 set customersTableName=customers;
 set itemsTableName=items;
-set reviewsTableName=product_reviews;
+set reviewsTableName=reviews;
 set web_pagesTableName=web_pages;
 set web_salesTableName=web_sales;
 set store_salesTableName=store_sales;
