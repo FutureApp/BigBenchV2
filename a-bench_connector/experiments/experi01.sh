@@ -14,6 +14,7 @@ ex_tag="experiment#01"
 source ../../../../dir_bench/lib_bench/shell/util.sh
 
 home_benchmark='../../..'
+home_framework='../../../..'
 home_dockerfile='../images/hive'
 home_charts='../charts'
 home_container_bench='/bigbenchv2'
@@ -104,8 +105,9 @@ case  $var  in
     # defines the result-dir name
     pathToCollectDir=$(util_relResultDirPath $home_framework)
     kubectl cp $loc_des_container:$home_container_bench/results $pathToCollectDir
-    echo -e "$bench_tag Download complete. Your data are located under <${LB} $pathToCollectDir ${NC}>"
-
+    cd $pathToCollectDir
+    location=$(pwd)
+    echo -e "$bench_tag Download complete. Your data are located under <${LB}$location${NC}>"
 ;;
 (cus_clean) #               -- Procedure to clean up the enviroment if needed        via custom script.
     echo -e "$bench_tag Cleaning the infrastructure.                        | $RR cus_clean $NC"
