@@ -22,10 +22,9 @@ ENV \
 
 RUN \
 cd ${HADOOP_HOME}/.. && \
-HADOOP_VERSION=2.6.5; wget https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
+HADOOP_VERSION=2.6.5; wget -q https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
 mkdir hadoop && \
 pwd && \
-ls  && \
 tar -xf hadoop*.tar.gz -C hadoop --strip-components=1 && \
 echo "Version $(ls | grep hadoop- | sed -e 's/[^0-9 . ]//g')" >> ./hadoop/version.conf && \
 chmod +x ./hadoop/bin/hadoop && \
@@ -41,12 +40,9 @@ RUN \
 RUN \
   cd ${HADOOP_HOME} && \
   mkdir -p hive && \
-  wget http://archive.cloudera.com/cdh5/cdh/5/hive-0.13.1-cdh5.3.2.tar.gz && \
+  wget -q http://archive.cloudera.com/cdh5/cdh/5/hive-0.13.1-cdh5.3.2.tar.gz && \
   tar -xf hive*.tar.gz -C hive --strip-components=1 && \
   rm hive-*.tar.gz
-
-  
-# TODO replace top with  http://mirror.softaculous.com/apache/hive/hive-2.3.4/apache-hive-2.3.4-bin.tar.gz
 
 ADD content/hive-env.sh /usr/local/hadoop/hive/conf/hive-env.sh
 ADD content/hive-site.xml /usr/local/hadoop/hive/conf/hive-site.xml
