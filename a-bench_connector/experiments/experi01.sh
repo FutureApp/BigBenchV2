@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
 
+#!/usr/bin/env bash
 LB='\033[1;34m'
 RR='\033[1;31m'
 NC='\033[0m' # No Color
@@ -8,6 +8,8 @@ bench_tag=${LB}[A-Bench]${NC}
 
 ex_tag="experiment#01"
 
+loc_des_container="thadoop-hadoop-bench-driver-0"
+#loc_des_container="thadoop-hadoop-hdfs-nn-0"
 
 # all functions calls are indicated by prefix <util_xxx>
 # Provides some additional and nice features.
@@ -71,7 +73,6 @@ case  $var  in
 (cus_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
     echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare $NC"
     
-    loc_des_container="thadoop-hadoop-hdfs-nn-0"
     kubectl cp $home_benchmark $loc_des_container:/
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $home_container_bench                    && \
                                                             echo Copying benchmark-data to HDFS         && \
@@ -88,7 +89,6 @@ case  $var  in
 (cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
     
-    loc_des_container="thadoop-hadoop-hdfs-nn-0"
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $home_container_bench                    && \
                                                             hive -f queries/q29.hql 
                                                         "
@@ -96,7 +96,6 @@ case  $var  in
 (cus_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
     echo -e "$bench_tag Downloading the results of the experiment.          | $RR cus_collect $NC"
     
-    loc_des_container="thadoop-hadoop-hdfs-nn-0"
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $home_container_bench                    && \
                                                             mkdir 'results'                             && \
                                                             hadoop fs -get '/' './results'              && \
@@ -118,6 +117,9 @@ case  $var  in
 #    //TODO Your code comes here 
 ;;
 #--------------------------------------------------------------------------------------------[ Help ]--
+(deba)
+    kubectl exec -it "thadoop-hadoop-hdfs-nn-0" bash
+;;
 (--help|*) #                -- Prints the help and usage message
     echo -e  "${bench} USAGE $var <case>"
     echo -e 

@@ -44,7 +44,7 @@ RUN \
   tar -xf hive*.tar.gz -C hive --strip-components=1 && \
   rm hive-*.tar.gz
 
-ADD content/hive-env.sh /usr/local/hadoop/hive/conf/hive-env.sh
+  ADD content/hive-env.sh /usr/local/hadoop/hive/conf/hive-env.sh
 ADD content/hive-site.xml /usr/local/hadoop/hive/conf/hive-site.xml
 
 ENV \
