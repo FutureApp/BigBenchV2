@@ -11,12 +11,12 @@ metadata:
     component: bench-driver
 spec:
   ports:
-  - name: dfs
-    port: 9000
+  - name: thrift
+    port: 9083
     protocol: TCP
-  - name: webhdfs
-    port: 50070
-  clusterIP: None
+  - name: thrifto
+    port: 10000
+    protocol: TCP
   selector:
     app: {{ template "hadoop.name" . }}
     release: {{ .Release.Name }}

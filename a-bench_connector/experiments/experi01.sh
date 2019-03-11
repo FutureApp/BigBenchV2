@@ -64,6 +64,11 @@ case  $var  in
 (cus_deploy) #              -- Procedure to deploy your benchmark on kubernetes.     via custom script.
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_deploy $NC"
     
+    helm delete --purge sql-mysql
+    helm install --name sql-mysql \
+    --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
+    stable/mysql
+
     nameOfHadoopCluster='thadoop'
     cd $home_charts
     helm delete     --purge $nameOfHadoopCluster
@@ -78,9 +83,9 @@ case  $var  in
                                                             echo Copying benchmark-data to HDFS         && \
     														bash ./schema/CopyData2HDFS.sh              && \
                                                             echo Copying benchmark-data was successfull && \
-                                                            echo Starting to initialize db-schema       && \
-    														schematool -dbType derby -initSchema 
+                                                            echo Starting to initialize db-schema       
                                                         "  
+    														#schematool -dbType derby -initSchema 
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $home_container_bench                    && \
                                                             echo Creating BigBenchV2-DB                 && \
                                                             hive -f schema/HiveCreateSchema.sql 
@@ -118,7 +123,7 @@ case  $var  in
 ;;
 #--------------------------------------------------------------------------------------------[ Help ]--
 (deba)
-    kubectl exec -it "thadoop-hadoop-hdfs-nn-0" bash
+    kubectl exec -it $loc_des_container bash
 ;;
 (--help|*) #                -- Prints the help and usage message
     echo -e  "${bench} USAGE $var <case>"
