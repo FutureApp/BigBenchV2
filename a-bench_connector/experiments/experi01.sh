@@ -36,7 +36,7 @@ case  $var  in
     echo -e "$bench_tag Running defined experiment... "
     
     ./$0 cus_build
-    
+    util_sleep 10
     ./$0 cus_deploy
     util_sleep 60
     
@@ -65,6 +65,7 @@ case  $var  in
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_deploy $NC"
     
     helm delete --purge sql-mysql
+    util_sleep 10
     helm install --name sql-mysql \
     --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
     stable/mysql

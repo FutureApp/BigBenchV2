@@ -44,12 +44,7 @@ limitations under the License.
     <description>Auto creates necessary schema on a startup if one doesn't exist. Set this to false, after creating it once.To enable auto create also set hive.metastore.schema.verification=false. Auto creation is not recommended for production use cases, run schematool command instead.</description>
   </property>
 <property>
-  <name>hive.metastore.uris</name>
-  <value>thrift://localhost:9083</value>
-  <description>IP address (or fully-qualified domain name) and port of the metastore host</description>
-</property>
-<property>
-<name>hive.metastore.schema.verification</name>
-<value>true</value>
+  <name>hive.metastore.schema.verification</name>
+  <value>true</value>
 </property>
 </configuration>
