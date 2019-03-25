@@ -65,7 +65,7 @@ case  $var  in
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_deploy $NC"
     
     helm delete --purge sql-mysql
-    util_sleep 10
+    util_sleep 30
     helm install --name sql-mysql \
     --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
     stable/mysql
@@ -75,6 +75,7 @@ case  $var  in
     helm delete     --purge $nameOfHadoopCluster
     helm install    --name  $nameOfHadoopCluster hadoop
     echo -e  "${bench_tag} hadoop cluster started and named as < $nameOfHadoopCluster > ..."
+    util_sleep 30
 ;;
 (cus_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
     echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare $NC"
@@ -84,9 +85,9 @@ case  $var  in
                                                             echo Copying benchmark-data to HDFS         && \
     														bash ./schema/CopyData2HDFS.sh              && \
                                                             echo Copying benchmark-data was successfull && \
-                                                            echo Starting to initialize db-schema       
+                                                            echo Starting to initialize db-schema       && \
+    														schematool -dbType mysql -initSchema 
                                                         "  
-    														#schematool -dbType derby -initSchema 
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $home_container_bench                    && \
                                                             echo Creating BigBenchV2-DB                 && \
                                                             hive -f schema/HiveCreateSchema.sql 

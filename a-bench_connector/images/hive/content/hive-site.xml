@@ -23,7 +23,7 @@ limitations under the License.
 </property>
 <property>
   <name>javax.jdo.option.ConnectionURL</name>
-  <value>jdbc:mysql://sql-mysql:3306/metastore_db?createDatabaseIfNotExist=true</value>
+  <value>jdbc:mysql://sql-mysql:3306/metastore_db?createDatabaseIfNotExist=true&amp;useSSL=false</value>
   <description>the URL of the MySQL database</description>
 </property>
 <property>
