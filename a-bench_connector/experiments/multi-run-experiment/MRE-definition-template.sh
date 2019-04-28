@@ -10,17 +10,17 @@ exutils="../../utils/exutils.sh"
 # imports
 source $exutils
 
+# HOME
 home_benchmark='../../../..'
 home_framework='../../../../..'
 home_charts='../../charts'
 home_dockerfile='../../images/hive'
 
+
 container_home__bench='/bigbenchv2'
 
-
 bench_tag=${LB}[A-Bench]${NC}
-ex_tag="template_ex"
-path_to_mSRE_file="./mSRE_template/mSRE-definition-template.sh"
+ex_tag="awesome_experiment_MRE_demo"
 
 if [[ $# -eq 0 ]] ; then
     ./$0 --help
