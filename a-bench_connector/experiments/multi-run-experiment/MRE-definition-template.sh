@@ -36,16 +36,16 @@ case  $var  in
     mSRE_iterations=${2:-1}
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
-    ./$0 MRE_build
-    ./$0 MRE_deploy
-    ./$0 MRE_prepare
+    #./$0 MRE_build
+    #./$0 MRE_deploy
+    #./$0 MRE_prepare
 
 
     home_framework=$(readlink -f "../../../..")
     pathToCollectDir=$(exutils_relResultDirPath $home_framework)
     echo $pathToCollectDir
     start_time=$(exutils_UTC_TimestampInNanos)
-    ./$0 call_mSRE $pathToCollectDir $mSRE_iterations
+    ./$0 MRE_run $pathToCollectDir $mSRE_iterations
     end_time=$(exutils_UTC_TimestampInNanos)
     exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir $ex_tag
     
