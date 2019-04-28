@@ -128,6 +128,8 @@ case  $var  in
     kubectl exec -it $loc_des_container bash
 ;;
 (--help|*) #                -- Prints the help and usage message
+    # Greetings to Ma_Sys.ma -- https://github.com/m7a --
+    # The code-snipped was implemented by him.
     echo -e  "${bench} USAGE $var <case>"
     echo -e 
     echo -e  The following cases are available:
