@@ -46,7 +46,40 @@ function exutils_auto_collectMeasurementsToZip {
     exportFileName=$4
     mkdir -p $exportDirectory
     ab_exportDirectory=$(readlink -f $exportDirectory)
-
+    echo "stop"
     echo $experiment_start $experiment_end "$ab_exportDirectory/$exportFileName.zip"
     exutils_collectMeasurements_FromT_ToT_csv_zip $experiment_start $experiment_end "$ab_exportDirectory/$exportFileName.zip"
+}
+
+# Defines a unique time-based name for a result-directory, creates the directory if needed.
+# The location is relative to the provied prefix. The function will return the absolut path
+# via echoing.
+# E.g:      /usr/home/test   // < Input
+# Return:   /usr/home/test/results/20190101145559
+
+# Argument 1: $1 -- Prefix - Path for the directory
+# Return    :    -- Path to  directory.
+function exutils_relResultDirPath()
+{   
+    home_framework=$1
+    current_time=$(date "+%Y%m%d_%H_%M_%S")
+    dir_name=$current_time
+    pathToCollectDir=$home_framework/results/$dir_name
+    
+    # Return
+    echo $pathToCollectDir
+}
+
+function exutils_dynmic_helpByCodeParse {
+    # Greetings to Ma_Sys.ma -- https://github.com/m7a --
+    # The original code-snipped bellow and the switch-case file structure was implemented by him .  
+    echo -e  "${bench} USAGE $var <case>"
+    echo -e 
+    echo -e  The following cases are available:
+    echo -e 
+    # An intelligent means of printing out all cases available and their
+ 	# section. WARNING: -E is not portable!
+    grep -E '^(#--+\[ |\([a-zA-Z_\|\*-]+\))' < "$0" | cut -c 2- | \
+    sed -E -e 's/--+\[ (.+) \]--/\1/g' -e 's/(.*)\)$/ * \1/g' \
+    -e 's/(.*)\) # (.*)/ * \1 \2/g'
 }

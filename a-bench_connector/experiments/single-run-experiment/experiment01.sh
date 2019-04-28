@@ -93,14 +93,14 @@ case  $var  in
     echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare $NC"
     
     kubectl cp $home_benchmark $loc_des_container:/
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
+    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             echo Copying benchmark-data to HDFS         && \
     														bash ./schema/CopyData2HDFS.sh              && \
                                                             echo Copying benchmark-data was successfull && \
                                                             echo Starting to initialize db-schema       && \
     														schematool -dbType mysql -initSchema 
                                                         "  
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
+    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             echo Creating BigBenchV2-DB                 && \
                                                             hive -f schema/HiveCreateSchema.sql 
                                                         "
@@ -121,7 +121,7 @@ case  $var  in
     exportExperimentID=$5
 
 #   --------------------------
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
+    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             mkdir 'results'                             && \
                                                             hadoop fs -get '/' './results'              && \
                                                             echo 'Hadoop export successfull.'

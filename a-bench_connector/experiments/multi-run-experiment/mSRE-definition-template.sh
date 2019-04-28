@@ -68,7 +68,7 @@ case  $var  in
     exportDirectory=$4
     exportExperimentID=$5
 
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
+    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             mkdir 'results'                             && \
                                                             hadoop fs -get '/' './results'              && \
                                                             echo 'Hadoop export successfull.'
@@ -84,17 +84,7 @@ case  $var  in
  
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
-    # Greetings to Ma_Sys.ma -- https://github.com/m7a --
-#    The code-snipped was implemented by him.
-    echo -e  "${bench} USAGE $var <case>"
-    echo -e 
-    echo -e  The following cases are available:
-    echo -e 
-    # An intelligent means of printing out all cases available and their
- 	# section. WARNING: -E is not portable!
-    grep -E '^(#--+\[ |\([a-z_\|\*-]+\))' < "$0" | cut -c 2- | \
-    sed -E -e 's/--+\[ (.+) \]--/\1/g' -e 's/(.*)\)$/ * \1/g' \
-    -e 's/(.*)\) # (.*)/ * \1 \2/g'
+  exutils_dynmic_helpByCodeParse
 ;;
 esac     
 done
