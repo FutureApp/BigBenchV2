@@ -44,15 +44,15 @@ case  $var  in
 (run_ex) #                  -- ProcFedure to run the experiment described by the steps below. 
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
-    #./$0 cus_build
-    #util_sleep 10
-    #./$0 cus_deploy
-    #util_sleep 60
-    #./$0 cus_prepare
-    #util_sleep 10
+    ./$0 cus_build
+    util_sleep 10
+    ./$0 cus_deploy
+    util_sleep 60
+    ./$0 cus_prepare
+    util_sleep 10
 
     start_time=$(exutils_UTC_TimestampInNanos)
-    #./$0 cus_workload
+    ./$0 cus_workload
     sleep 30
     end_time=$(exutils_UTC_TimestampInNanos)
     util_sleep 10
