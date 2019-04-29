@@ -42,7 +42,7 @@ case  $var  in
     ./$0 MRE_prepare
     exutils_sleep 60
 
-    home_framework=$(readlink -f "../../../..")
+    home_framework=$(readlink -f "../../../../..")
     pathToCollectDir=$(exutils_relResultDirPath $home_framework)
     echo $pathToCollectDir
     start_time=$(exutils_UTC_TimestampInNanos)
@@ -102,7 +102,7 @@ case  $var  in
     while [ $counter -le $numberOfIterations ]
         do
         echo "Calling mSRE ($counter/$numberOfIterations)"
-        bash ./mSRE-definition-template.sh run_ex $pathDataToCollectTo $ex_tag-$counter $counter
+        bash ./mSRE_experiment_demoHIVE.sh run_ex $pathDataToCollectTo $ex_tag-$counter $counter
         ((counter++))
         done
   
