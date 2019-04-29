@@ -83,3 +83,35 @@ function exutils_dynmic_helpByCodeParse {
     sed -E -e 's/--+\[ (.+) \]--/\1/g' -e 's/(.*)\)$/ * \1/g' \
     -e 's/(.*)\) # (.*)/ * \1 \2/g'
 }
+
+# Stops the exection for a specific sleep-time
+#
+# Argument 1: $1 -- Time to sleep in seconds
+function exutils_sleep()
+{   
+    # scr:  https://stackoverflow.com/questions/12498304/using-bash-to-display-a-progress-working-indicator
+    # user: William Pursell
+    echo "Execution will pause for $1 seconds."
+    sleep $1 &
+    pid=$! # Process Id of the previous running command
+    spin='-\|/'
+
+    i=0
+    counter=$(($1-1))   
+    lCounter=0
+    mod=0
+    while kill -0 $pid 2>/dev/null
+    do
+      i=$(( (i+1) %4 ))
+      printf "\r${spin:$i:1}    | $counter [s]"
+      sleep .1
+      lCounter=$((lCounter+1))
+      mod=$((lCounter%10))
+        if [ $mod -eq 0 ]
+            then
+            lCounter=0
+            counter=$((counter-1))
+        fi
+    done
+    echo ''
+}

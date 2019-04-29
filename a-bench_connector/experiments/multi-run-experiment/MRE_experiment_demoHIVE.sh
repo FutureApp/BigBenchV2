@@ -18,9 +18,10 @@ home_dockerfile='../../images/hive'
 
 
 container_home__bench='/bigbenchv2'
+loc_des_container="thadoop-hadoop-bench-driver-0"
 
 bench_tag=${LB}[A-Bench]${NC}
-ex_tag="awesome_experiment_MRE_demo"
+ex_tag="MRE_experiment_demoHIVE"
 
 if [[ $# -eq 0 ]] ; then
     ./$0 --help
@@ -36,10 +37,10 @@ case  $var  in
     mSRE_iterations=${2:-1}
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
-    #./$0 MRE_build
-    #./$0 MRE_deploy
-    #./$0 MRE_prepare
-
+    ./$0 MRE_build
+    ./$0 MRE_deploy
+    ./$0 MRE_prepare
+    exutils_sleep 60
 
     home_framework=$(readlink -f "../../../..")
     pathToCollectDir=$(exutils_relResultDirPath $home_framework)
@@ -65,7 +66,7 @@ case  $var  in
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR MRE_deploy $NC"
     
     helm delete --purge sql-mysql
-    util_sleep 30
+    exutils_sleep 30
     helm install --name sql-mysql \
     --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
     stable/mysql
@@ -75,21 +76,20 @@ case  $var  in
     helm delete     --purge $nameOfHadoopCluster
     helm install    --name  $nameOfHadoopCluster hadoop
     echo -e  "${bench_tag} hadoop cluster started and named as < $nameOfHadoopCluster > ..."
-    util_sleep 30
+    exutils_sleep 30
 ;;
 (MRE_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
-    echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR MRE_prepare"
-    echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare $NC"
+    echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR MRE_prepare $NC"
     
     kubectl cp $home_benchmark $loc_des_container:/
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $home_container_bench                    && \
+    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
                                                             echo Copying benchmark-data to HDFS         && \
     														bash ./schema/CopyData2HDFS.sh              && \
                                                             echo Copying benchmark-data was successfull && \
                                                             echo Starting to initialize db-schema       && \
     														schematool -dbType mysql -initSchema 
                                                         "  
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $home_container_bench                    && \
+    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
                                                             echo Creating BigBenchV2-DB                 && \
                                                             hive -f schema/HiveCreateSchema.sql 
                                                         " 
