@@ -41,7 +41,7 @@ case  $var  in
     ./$0 mSRE_workload 
     end_time=$(exutils_UTC_TimestampInNanos)
     echo "waiting 60 s until all data are available in the database" && sleep 60
-    exutils_auto_collectMeasurementsToZip $start_time $end_time $exportLocationOfExperiment $exTag
+    #exutils_auto_collectMeasurementsToZip $start_time $end_time $exportLocationOfExperiment $exTag
     
     ./$0 mSRE_collect $start_time $end_time $exportLocationOfExperiment $exTag
     ./$0 mSRE_clean

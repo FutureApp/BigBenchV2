@@ -30,6 +30,16 @@ home_dockerfile='../../images/hive'
 
 container_home__bench='/bigbenchv2'
 
+function check_query_number () {
+    queryLikeToRun=$1
+    if [ -z "$queryLikeToRun" ]; then
+        echo "Error, you called the experiment without defining which experiment you would like to executes."; \
+        exit 1
+    fi
+    
+    echo "$queryLikeToRun"
+}
+
 
 if [[ $# -eq 0 ]] ; then
     ./$0 --help
@@ -42,8 +52,19 @@ case  $var  in
 
 #--------------------------------------------------------------------------------------[ Experiment ]--
 (run_ex) #                  -- ProcFedure to run the experiment described by the steps below. 
+    # This is a simple skeleton to run your experiment in a normed order.
+    # Normaly, there is nothing to change.
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
+    
+    # Checks if a query is given at runtime and passed as an argument to this file
+    queryLikeToRun=$2
+    if [ -z "$queryLikeToRun" ]; then
+        echo "Error, you called the experiment without defining which experiment you would like to executes."; \
+        exit 1
+    fi
+    echo "Query-Mapper has recognized a query for execution: $queryLikeToRun"
+
     ./$0 cus_build
     util_sleep 10
     ./$0 cus_deploy
@@ -52,7 +73,7 @@ case  $var  in
     util_sleep 10
 
     start_time=$(exutils_UTC_TimestampInNanos)
-    ./$0 cus_workload
+    ./$0 cus_workload $queryLikeToRun
     sleep 30
     end_time=$(exutils_UTC_TimestampInNanos)
     util_sleep 10
@@ -106,10 +127,13 @@ case  $var  in
                                                         "
 ;;
 (cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
+    query_number=$2
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
+    query_to_exec="queries/q$query_number".hql 
     
+    echo -e "$bench_tag Running  query $query_to_exec.                                            "
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
-                                                            hive -f queries/q29.hql 
+                                                            hive -f $query_to_exec 
                                                         "   
 ;;
 (cus_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
@@ -141,6 +165,9 @@ case  $var  in
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
     exutils_dynmic_helpByCodeParse
+;;
+(check_query_number) # --- private
+    echo "Calling check"
 ;;
 esac     
 done
