@@ -13,7 +13,7 @@ source $exutils
 
 
 bench_tag=${LB}[A-Bench]${NC}
-ex_tag="experiment#01"
+ex_tag=${EX_TAG:-DefaultExTag}
 
 loc_des_container="thadoop-hadoop-bench-driver-0"
 
@@ -78,8 +78,8 @@ case  $var  in
     end_time=$(exutils_UTC_TimestampInNanos)
     util_sleep 10
 
-    pathToCollectDir=$(util_relResultDirPath $home_framework)
-    exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir $ex_tag
+    pathToCollectDir=$(util_relResultDirPath $home_framework)_${ex_tag}_${queryLikeToRun} # formate: date_tag_queryNumber
+    exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir "${ex_tag}_${queryLikeToRun}"
     ./$0 cus_collect $start_time $end_time $pathToCollectDir $ex_tag
 
     util_sleep 10
@@ -129,7 +129,7 @@ case  $var  in
 (cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
     query_number=$2
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
-    query_to_exec="queries/q$query_number".hql 
+    query_to_exec="queries/$query_number".hql 
     
     echo -e "$bench_tag Running  query $query_to_exec.                                            "
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
