@@ -79,7 +79,7 @@ case  $var  in
     util_sleep 10
 
     pathToCollectDir=$(util_relResultDirPath $home_framework)_${ex_tag}_${queryLikeToRun} # formate: date_tag_queryNumber
-    exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir "${ex_tag}_${queryLikeToRun}"
+    exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir ${ex_tag}_${queryLikeToRun}
     ./$0 cus_collect $start_time $end_time $pathToCollectDir $ex_tag
 
     util_sleep 10
