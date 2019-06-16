@@ -1,6 +1,6 @@
 # The base hadoop image to use for all components.
 # See this repo for image build details: https://github.com/Comcast/kube-yarn/tree/master/image
-image: thadoop:latest
+image: jwgumcz/thadoop:latest
 imagePullPolicy: IfNotPresent
 
 # The version of the hadoop libraries being used in the image.
