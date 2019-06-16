@@ -92,7 +92,7 @@ case  $var  in
     
     eval $(minikube docker-env)
     cd $home_dockerfile
-    docker build -t thadoop .
+    # docker build -t jwgumcz/thadoop .
 ;;
 (cus_deploy) #              -- Procedure to deploy your benchmark on kubernetes.     via custom script.
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_deploy $NC"
