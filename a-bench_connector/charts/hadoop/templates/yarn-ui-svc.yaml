@@ -10,7 +10,7 @@ metadata:
     heritage: {{ .Release.Service }}
     component: yarn-ui
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 8088
     name: web

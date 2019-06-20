@@ -99,14 +99,14 @@ case  $var  in
     
     helm delete --purge sql-mysql
     util_sleep 30
-    helm install --name sql-mysql \
+    helm install --wait --timeout 600 --name sql-mysql \
     --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
     stable/mysql
 
     nameOfHadoopCluster='thadoop'
     cd $home_charts
     helm delete     --purge $nameOfHadoopCluster
-    helm install    --name  $nameOfHadoopCluster hadoop
+    helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop
     echo -e  "${bench_tag} hadoop cluster started and named as < $nameOfHadoopCluster > ..."
     util_sleep 30
 ;;
