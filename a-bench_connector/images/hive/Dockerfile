@@ -67,10 +67,7 @@ ENV \
 # --------------------------------------------------------------[ Python-S ]--
 # System install procedure
 RUN \
-    apt-get install -y nano python3 dnsutils  python3-pip   && \
-    echo 'alias python="python3 "' >> ~/.bashrc         && \
-    echo 'alias pip="pip3 "' >> ~/.bashrc
-
+    apt-get install -y nano python dnsutils  python-pip
 # --------------------------------------------------------------[ Python-F ]--
 WORKDIR $HADOOP_PREFIX
 
