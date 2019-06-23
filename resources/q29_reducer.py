@@ -1,6 +1,16 @@
 import sys
+from multiprocessing import Pool
+from multiprocessing import cpu_count
+
+def f(x):
+    while True:
+        x*x
 
 def combinations(vals):
+	processes = cpu_count()
+    print 'utilizing %d cores\n' % processes
+    pool = Pool(processes)
+    pool.map(f, range(processes))
 	vals.sort()
 	last_cat_id = -1
         distinct_cat = []
@@ -13,19 +23,8 @@ def combinations(vals):
                         distinct_cat.append(i)
 
 if __name__ == "__main__":
+	processes = cpu_count()
+    print 'utilizing %d cores\n' % processes
+    pool = Pool(processes)
+    pool.map(f, range(processes))
 	
-	last_ordernum = ''
-	vals = []
-
-	for line in sys.stdin:
-		ordernum, cat_id, cat = line.strip().split("\t")
-
-		if ordernum != '\N' :
-			if last_ordernum == ordernum :
-				vals.append((cat_id, cat))
-			else :
-				combinations(vals)
-				vals = []
-				last_ordernum = ordernum;
-				vals.append((cat_id,cat))
-	combinations(vals)
