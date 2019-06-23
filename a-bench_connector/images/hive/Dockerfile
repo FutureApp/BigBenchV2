@@ -61,7 +61,17 @@ ADD content/hive-site.xml /usr/local/hadoop/hive/conf/hive-site.xml
 ENV \
   HADOOP_USER_CLASSPATH_FIRST=true \  
   HADOOP_OPTS="-Djava.library.path=/usr/local/hadoop/lib"
- 
+
+
+
+# --------------------------------------------------------------[ Python-S ]--
+# System install procedure
+RUN \
+    apt-get install -y nano python3 dnsutils  python3-pip   && \
+    echo 'alias python="python3 "' >> ~/.bashrc         && \
+    echo 'alias pip="pip3 "' >> ~/.bashrc
+
+# --------------------------------------------------------------[ Python-F ]--
 WORKDIR $HADOOP_PREFIX
 
 # Hdfs ports
