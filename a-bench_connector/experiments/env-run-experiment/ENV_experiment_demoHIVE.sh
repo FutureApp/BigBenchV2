@@ -105,7 +105,7 @@ case  $var  in
 
     nameOfHadoopCluster='thadoop'
     cd $home_charts
-    helm delete     --purge $nameOfHadoopCluster
+    helm delete  --purge $nameOfHadoopCluster
     helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop
     echo -e  "${bench_tag} hadoop cluster started and named as < $nameOfHadoopCluster > ..."
     util_sleep 30
