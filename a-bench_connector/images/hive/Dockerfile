@@ -2,8 +2,6 @@ FROM java:8-jre
 
 # Add native libs
 ARG HADOOP_VERSION=2.6.5
-# ADD content/hadoop-${HADOOP_VERSION}.tar.gz /usr/local
-#ADD hadoop-native-${HADOOP_VERSION}.tar /usr/local/hadoop-${HADOOP_VERSION}/lib/native
 
 ENV \
   HADOOP_PREFIX=/usr/local/hadoop \
@@ -18,7 +16,6 @@ ENV \
   HIVE_HOME=/usr/local/hadoop/hive  \
   PATH="${PATH}:/usr/local/hadoop/bin:\
 /usr/local/hadoop/hive/bin"
-
 
 RUN \
 cd ${HADOOP_HOME}/.. && \
@@ -54,15 +51,12 @@ RUN \
   apt-get install libmysql-java -y  && \
   ln -s /usr/share/java/mysql-connector-java.jar /usr/local/hadoop/hive/lib/mysql-connector-java.jar
   
-  
 ADD content/hive-env.sh /usr/local/hadoop/hive/conf/hive-env.sh
 ADD content/hive-site.xml /usr/local/hadoop/hive/conf/hive-site.xml
 
 ENV \
   HADOOP_USER_CLASSPATH_FIRST=true \  
   HADOOP_OPTS="-Djava.library.path=/usr/local/hadoop/lib"
-
-
 
 # -------------------------------------------------------------[ Python-S ]--
 # System install procedure
