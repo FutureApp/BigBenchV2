@@ -1,7 +1,7 @@
 FROM java:8-jre
 
 # Add native libs
-ARG HADOOP_VERSION=2.6.5
+ARG HADOOP_VERSION=2.7.7
 
 ENV \
   HADOOP_PREFIX=/usr/local/hadoop \
@@ -19,7 +19,7 @@ ENV \
 
 RUN \
 cd ${HADOOP_HOME}/.. && \
-HADOOP_VERSION=2.6.5; wget -q \
+HADOOP_VERSION=2.7.7; wget -q \
   https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
 mkdir hadoop && \
 pwd && \
