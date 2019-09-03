@@ -19,16 +19,16 @@ ENV \
 /usr/local/hadoop/hive/bin"
 
 RUN \
-cd ${HADOOP_HOME}/.. && \
-var_down_hadoop_url="https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" &&\
-echo "Downloading hadoop via: ${var_down_hadoop_url}" &&\
-wget -q ${var_down_hadoop_url} &&\
-mkdir hadoop && \
-pwd && \
-tar -xf hadoop*.tar.gz -C hadoop --strip-components=1 && \
-echo "Version $(ls | grep hadoop- | sed -e 's/[^0-9 . ]//g')" >> ./hadoop/version.conf && \
-chmod +x ./hadoop/bin/hadoop && \
-rm -rf hadoop*.*
+  cd ${HADOOP_HOME}/.. && \
+  var_down_hadoop_url="https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" &&\
+  echo "Downloading hadoop via: ${var_down_hadoop_url}" &&\
+  wget -q ${var_down_hadoop_url} &&\
+  mkdir hadoop && \
+  pwd && \
+  tar -xf hadoop*.tar.gz -C hadoop --strip-components=1 && \
+  echo "Version $(ls | grep hadoop- | sed -e 's/[^0-9 . ]//g')" >> ./hadoop/version.conf && \
+  chmod +x ./hadoop/bin/hadoop && \
+  rm -rf hadoop*.*
 
 RUN \
   rm -f ${HADOOP_PREFIX}/logs/*
