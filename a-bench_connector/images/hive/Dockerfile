@@ -2,6 +2,7 @@ FROM java:8-jre
 
 # Add native libs
 ARG HADOOP_VERSION=2.7.7
+ARG HIVE_VERSION=1.2.1
 
 ENV \
   HADOOP_PREFIX=/usr/local/hadoop \
@@ -19,8 +20,9 @@ ENV \
 
 RUN \
 cd ${HADOOP_HOME}/.. && \
-HADOOP_VERSION=2.7.7; wget -q \
-  https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
+var_down_hadoop_url="https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" &&\
+echo "Downloading hadoop via: ${var_down_hadoop_url}" &&\
+wget -q ${var_down_hadoop_url} &&\
 mkdir hadoop && \
 pwd && \
 tar -xf hadoop*.tar.gz -C hadoop --strip-components=1 && \
@@ -35,9 +37,11 @@ RUN \
 RUN \
   cd ${HADOOP_HOME} && \
   mkdir -p hive && \
-  wget -q http://archive.cloudera.com/cdh5/cdh/5/hive-0.13.1-cdh5.3.2.tar.gz && \
-  tar -xf hive*.tar.gz -C hive --strip-components=1 && \
-  rm hive-*.tar.gz
+  var_down_hive_url="https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz" &&\
+  echo "Downloading hive via: ${var_down_hive_url}" &&\
+  wget -q ${var_down_hive_url} &&\
+  tar -xf apache-hive*.tar.gz -C hive --strip-components=1 && \
+  rm apache-hive-*.tar.gz
 
   # the jessie specific files were moved to the archive backend
   # In order to run apt-get update we have to use the following workaround
