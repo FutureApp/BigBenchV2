@@ -20,9 +20,11 @@ data:
 
     # Copy config files from volume mount
 
-    for f in slaves core-site.xml hdfs-site.xml mapred-site.xml yarn-site.xml; do
+    for f in spark-defaults.conf slaves core-site.xml hdfs-site.xml mapred-site.xml yarn-site.xml; do
       if [[ -e ${CONFIG_DIR}/$f ]]; then
         cp ${CONFIG_DIR}/$f $HADOOP_PREFIX/etc/hadoop/$f
+        #TODO move that corrrectly
+        cp ${CONFIG_DIR}/$f $SPARK_HOME/conf/$f
       else
         echo "ERROR: Could not find $f in $CONFIG_DIR"
         exit 1
@@ -101,6 +103,15 @@ data:
         </property>
     </configuration>
 
+  spark-defaults.conf: |
+    spark.master local
+    spark.driver.memory     512m
+    spark.yarn.am.memory    512m
+    spark.executor.memory   512m
+
+    spark.eventLog.enabled  true
+    spark.eventLog.dir hdfs://{{ template "hadoop.fullname" . }}-hdfs-nn:9000/
+
   hdfs-site.xml: |
     <?xml version="1.0"?>
     <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -168,6 +179,8 @@ data:
         <value>{{ template "hadoop.fullname" . }}-yarn-rm-0.{{ template "hadoop.fullname" . }}-yarn-rm.{{ .Release.Namespace }}.svc.cluster.local:19888</value>
       </property>
     </configuration>
+
+    
 
   slaves: |
     localhost

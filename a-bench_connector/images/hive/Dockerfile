@@ -67,6 +67,31 @@ ENV \
 RUN \
     apt-get install -y nano python dnsutils  python-pip
 # -------------------------------------------------------------[ Python-F ]--
+
+# Installs Apache Spark
+# Based on: https://www.linode.com/docs/databases/hadoop/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/
+
+ARG SPARK_VERSION=2.3.3
+ENV SPARK_HOME=/opt/spark
+RUN \ 
+  echo ""&&\
+  mkdir -p ${SPARK_HOME}&&\
+  cd ${SPARK_HOME}/.. &&\
+  var_spark_url="https://www-eu.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz";\
+  echo "Downloading apache spark via: ${var_spark_url}" &&\
+  wget -q ${var_spark_url}
+ RUN \
+  cd ${SPARK_HOME}/.. &&\
+  echo "hier " && ls &&\
+  tar zxvf spark*.tgz -C spark --strip-components=1 &&\
+  rm spark-*.tgz &&\
+  echo "Apache Spark is installed"
+
+ENV PATH="${PATH}:/usr/local/hadoop/bin:\
+/usr/local/hadoop/hive/bin:\
+/opt/spark/bin"
+
+COPY content/spark-defaults.conf ${SPARK_HOME}/conf
 WORKDIR $HADOOP_PREFIX
 
 # Hdfs ports
