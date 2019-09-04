@@ -1,0 +1,12 @@
+schematool -dbType mysql -initSchema
+hive --service metastore
+
+
+helm install --name sql-mysql \
+    --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
+    stable/mysql
+
+
+save 
+
+alias >> ~/.bash_aliases

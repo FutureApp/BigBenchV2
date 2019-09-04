@@ -9,6 +9,17 @@ hadoopVersion: 2.7.3
 # Select antiAffinity as either hard or soft, default is soft
 antiAffinity: "soft"
 
+abench:
+  driver:
+    pdbMinAvailable: 1
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "10m"
+      limits:
+        memory: "2048Mi"
+        cpu: "1000m"
+
 hdfs:
   nameNode:
     pdbMinAvailable: 1

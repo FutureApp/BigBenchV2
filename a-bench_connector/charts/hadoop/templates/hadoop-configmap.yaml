@@ -10,6 +10,7 @@ metadata:
 data:
   bootstrap.sh: |
     #!/bin/bash
+    #This file derived from hadoop-configmap.yaml 
 
     : ${HADOOP_PREFIX:=/usr/local/hadoop}
 
@@ -20,10 +21,11 @@ data:
 
     # Copy config files from volume mount
 
-    for f in spark-defaults.conf slaves core-site.xml hdfs-site.xml mapred-site.xml yarn-site.xml; do
+    for f in spark-defaults.conf hive-site.xml slaves core-site.xml hdfs-site.xml mapred-site.xml yarn-site.xml; do
       if [[ -e ${CONFIG_DIR}/$f ]]; then
+        # Distributes all config files into all config-dirs.
         cp ${CONFIG_DIR}/$f $HADOOP_PREFIX/etc/hadoop/$f
-        #TODO move that corrrectly
+        cp ${CONFIG_DIR}/$f $HIVE_HOME/conf/$f
         cp ${CONFIG_DIR}/$f $SPARK_HOME/conf/$f
       else
         echo "ERROR: Could not find $f in $CONFIG_DIR"
@@ -108,11 +110,84 @@ data:
     spark.driver.memory     512m
     spark.yarn.am.memory    512m
     spark.executor.memory   512m
-
-    spark.driver.allowMultipleContexts = true
+    
+    spark.sql.warehouse.dir  hdfs://{{ template "hadoop.fullname" . }}-hdfs-nn:9000/
     spark.eventLog.enabled  false
     spark.eventLog.dir hdfs://{{ template "hadoop.fullname" . }}-hdfs-nn:9000/
+  
+  hive-site.xml: |
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?><!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+      the License. You may obtain a copy of the License at
 
+      http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+      -->
+      <configuration>
+      <property>
+          <name>hive.cli.print.current.db</name>
+          <value>true</value>
+          <description>Whether to include the current database in the Hive prompt.</description>
+      </property>
+      <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:mysql://sql-mysql:3306/metastore_db?createDatabaseIfNotExist=true&amp;useSSL=false</value>
+        <description>the URL of the MySQL database</description>
+      </property>
+      <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+      </property>
+      <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>hive</value>
+      </property>
+      <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>phive</value>
+      </property>
+      <property>
+          <name>datanucleus.schema.autoCreateAll</name>
+          <value>false</value>
+          <description>Auto creates necessary schema on a startup if one doesn't exist. Set this to false, after creating it once.To enable auto create also set hive.metastore.schema.verification=false. Auto creation is not recommended for production use cases, run schematool command instead.</description>
+        </property>
+      <property>
+        <name>hive.metastore.schema.verification</name>
+        <value>true</value>
+      </property>
+      <!-- s -->
+      <property>
+        <name>datanucleus.autoCreateSchema</name>
+        <value>false</value>
+      </property>
+
+      <property>
+        <name>datanucleus.fixedDatastore</name>
+        <value>true</value>
+      </property>
+
+      <property>
+        <name>datanucleus.autoStartMechanism</name> 
+        <value>SchemaTable</value>
+      </property> 
+
+      <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://thadoop-hadoop-thrift-server:9083</value>
+        <description>IP address (or fully-qualified domain name) and port of the metastore host</description>
+      </property>
+      </configuration>
+    
   hdfs-site.xml: |
     <?xml version="1.0"?>
     <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>

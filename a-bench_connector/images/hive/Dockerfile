@@ -55,8 +55,6 @@ RUN \
   apt-get install libmysql-java -y  && \
   ln -s /usr/share/java/mysql-connector-java.jar /usr/local/hadoop/hive/lib/mysql-connector-java.jar
   
-ADD content/hive-env.sh /usr/local/hadoop/hive/conf/hive-env.sh
-ADD content/hive-site.xml /usr/local/hadoop/hive/conf/hive-site.xml
 
 ENV \
   HADOOP_USER_CLASSPATH_FIRST=true \  
@@ -90,6 +88,9 @@ RUN \
 ENV PATH="${PATH}:/usr/local/hadoop/bin:\
 /usr/local/hadoop/hive/bin:\
 /opt/spark/bin"
+
+ADD content/hive-env.sh /usr/local/hadoop/hive/conf/hive-env.sh
+ADD content/hive-site.xml /usr/local/hadoop/hive/conf/hive-site.xml
 
 COPY content/spark-defaults.conf ${SPARK_HOME}/conf
 WORKDIR $HADOOP_PREFIX

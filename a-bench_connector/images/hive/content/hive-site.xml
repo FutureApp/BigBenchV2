@@ -47,4 +47,25 @@ limitations under the License.
   <name>hive.metastore.schema.verification</name>
   <value>true</value>
 </property>
+<!-- s -->
+<property>
+  <name>datanucleus.autoCreateSchema</name>
+  <value>false</value>
+</property>
+
+<property>
+  <name>datanucleus.fixedDatastore</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>datanucleus.autoStartMechanism</name> 
+  <value>SchemaTable</value>
+</property> 
+
+<property>
+  <name>hive.metastore.uris</name>
+  <value>thrift://thadoop-hadoop-thrift-server:9083</value>
+  <description>IP address (or fully-qualified domain name) and port of the metastore host</description>
+</property>
 </configuration>
