@@ -4,12 +4,15 @@ wget -O alice.txt https://www.gutenberg.org/files/11/11-0.txt &&\
 hdfs dfs -mkdir /inputs &&\
 hdfs dfs -put alice.txt /inputs
 
+wget -O alice.txt https://www.gutenberg.org/files/11/11-0.txt &&\
+hdfs dfs -mkdir inputs &&\
+hdfs dfs -put alice.txt inputs
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 
-val logFile = "hdfs://inputs/alice.txt"
+val logFile = "hdfs:///inputs/alice.txt"
 val conf = new SparkConf().setAppName("Simple Application")
 //val sc = new SparkContext(conf)
 val logData = sc.textFile(logFile, 2).cache()
