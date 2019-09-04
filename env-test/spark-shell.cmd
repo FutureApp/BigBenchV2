@@ -1,13 +1,13 @@
-
+// ------------------------- To cmd ------------
+// Prepare step -- Loding data into Hadoop
 cd ${HADOOP_HOME}
 wget -O alice.txt https://www.gutenberg.org/files/11/11-0.txt &&\
 hdfs dfs -mkdir /inputs &&\
 hdfs dfs -put alice.txt /inputs
 
-wget -O alice.txt https://www.gutenberg.org/files/11/11-0.txt &&\
-hdfs dfs -mkdir inputs &&\
-hdfs dfs -put alice.txt inputs
 
+// ------------------------- Into Sparkshell ------------
+// Code to insert into spark-shell
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
