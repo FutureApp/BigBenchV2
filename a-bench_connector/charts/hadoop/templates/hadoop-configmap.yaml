@@ -109,7 +109,8 @@ data:
     spark.yarn.am.memory    512m
     spark.executor.memory   512m
 
-    spark.eventLog.enabled  true
+    spark.driver.allowMultipleContexts = true
+    spark.eventLog.enabled  false
     spark.eventLog.dir hdfs://{{ template "hadoop.fullname" . }}-hdfs-nn:9000/
 
   hdfs-site.xml: |
