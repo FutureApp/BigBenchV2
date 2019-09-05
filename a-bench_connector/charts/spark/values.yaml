@@ -29,6 +29,7 @@ WebUi:
 
 Worker:
   Name: worker
+  
   Image: "k8s.gcr.io/spark"
   ImageTag: "latest"
   Replicas: 3

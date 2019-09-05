@@ -1,6 +1,6 @@
 # The base hadoop image to use for all components.
 # See this repo for image build details: https://github.com/Comcast/kube-yarn/tree/master/image
-image: proto
+image: jwgumcz/bench
 imagePullPolicy: IfNotPresent
 
 # The version of the hadoop libraries being used in the image.
@@ -70,7 +70,7 @@ yarn:
     # This should be tuned to fit your workload.
     resources:
       requests:
-        memory: "2048Mi"
+        memory: "1048Mi"
         cpu: "10m"
       limits:
         memory: "2048Mi"

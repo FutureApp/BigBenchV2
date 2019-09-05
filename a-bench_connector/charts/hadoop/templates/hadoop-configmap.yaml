@@ -52,7 +52,24 @@ data:
       $HADOOP_PREFIX/sbin/hadoop-daemon.sh start datanode
     fi
 
+    if [[ "${HOSTNAME}" =~ "spark-master" ]]; then
+      echo 'Bob' > /hello.world
+      cp ${CONFIG_DIR}/start-spark-master.sh $HADOOP_PREFIX/sbin/
+      cd $HADOOP_PREFIX/sbin
+      #chmod +x start-yarn-rm.sh
+      #./start-yarn-rm.sh
+    fi
+
+    if [[ "${HOSTNAME}" =~ "spark-worker" ]]; then
+      echo 'Bob' > /hello.world
+      cp ${CONFIG_DIR}/start-spark-worker.sh $HADOOP_PREFIX/sbin/
+      cd $HADOOP_PREFIX/sbin
+      #chmod +x start-yarn-rm.sh
+      #./start-yarn-rm.sh
+    fi
+
     if [[ "${HOSTNAME}" =~ "yarn-rm" ]]; then
+      echo 'Bob' > /hello.world
       cp ${CONFIG_DIR}/start-yarn-rm.sh $HADOOP_PREFIX/sbin/
       cd $HADOOP_PREFIX/sbin
       chmod +x start-yarn-rm.sh
@@ -165,7 +182,7 @@ data:
         <name>hive.metastore.schema.verification</name>
         <value>true</value>
       </property>
-      <!-- s -->
+      <!-- abench-addings -->
       <property>
         <name>datanucleus.autoCreateSchema</name>
         <value>false</value>
@@ -260,6 +277,20 @@ data:
 
   slaves: |
     localhost
+
+  start-spark-master.sh: |
+      #!/usr/bin/env bash
+  
+      # Start Spark-Master
+      echo "Starting Spark - Master"
+      echo "MyRole Spark-Master" > /myrole.info
+
+  start-spark-worker.sh: |
+      #!/usr/bin/env bash
+
+      # Start Spark-Master
+      echo "Starting Spark - Worker"
+      echo "MyRole Spark-Worker" > /myrole.info
 
   start-yarn-nm.sh: |
     #!/usr/bin/env bash
