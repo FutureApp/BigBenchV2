@@ -89,6 +89,11 @@ ENV PATH="${PATH}:/usr/local/hadoop/bin:\
 /usr/local/hadoop/hive/bin:\
 /opt/spark/bin"
 
+RUN \
+  apt-get install -y git &&\
+  cd / &&\
+  git clone "https://github.com/FutureApp/bigbenchv2.git"
+
 ADD content/hive-env.sh /usr/local/hadoop/hive/conf/hive-env.sh
 ADD content/hive-site.xml /usr/local/hadoop/hive/conf/hive-site.xml
 
@@ -101,6 +106,10 @@ EXPOSE 50010 50020 50070 50075 50090 8020 9000
 EXPOSE 19888
 #Yarn ports
 EXPOSE 8030 8031 8032 8033 8040 8042 8088
+# Spark Master
+EXPOSE 9005 7077
+# Spark Worker
+EXPOSE 9006
 #Other ports
 EXPOSE 49707 2122
 # METASTORE 
