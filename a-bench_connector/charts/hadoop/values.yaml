@@ -11,13 +11,17 @@ antiAffinity: "soft"
 
 mysql: 
   name: hello-world-sql
+  mysqlRootPassword: "a"
+  mysqlUser: "hive"
+  mysqlPassword: "phive"
+  mysqlDatabase: "metastore_db"
   
 abench:
   driver:
     pdbMinAvailable: 1
     resources:
       requests:
-        memory: "256Mi"
+        memory: "1G"
         cpu: "10m"
       limits:
         memory: "2048Mi"
@@ -38,7 +42,7 @@ spark_master:
 spark_worker:
   resources:
       requests:
-        memory: "256Mi"
+        memory: "1G"
         cpu: "10m"
       limits:
         memory: "2048Mi"

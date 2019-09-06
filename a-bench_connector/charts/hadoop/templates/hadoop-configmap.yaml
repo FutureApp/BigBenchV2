@@ -53,11 +53,18 @@ data:
     fi
 
     if [[ "${HOSTNAME}" =~ "spark-master" ]]; then
-      echo 'Bob' > /hello.world
-      cp ${CONFIG_DIR}/start-spark-master.sh $HADOOP_PREFIX/sbin/
-      cd $HADOOP_PREFIX/sbin
-      #chmod +x start-yarn-rm.sh
-      #./start-yarn-rm.sh
+      cp ${CONFIG_DIR}/start-spark-master.sh $SPARK_HOME/sbin/
+      cd $SPARK_HOME/sbin
+      chmod +x start-spark-master.sh
+      ./start-spark-master.sh
+    fi
+
+    if [[ "${HOSTNAME}" =~ "spark-worker" ]]; then
+      echo 'Spark-Worker' > /hello.world
+      cp ${CONFIG_DIR}/start-spark-worker.sh $SPARK_HOME/sbin/
+      cd $SPARK_HOME/sbin
+      chmod +x start-spark-worker.sh
+      ./start-spark-worker.sh
     fi
 
     if [[ "${HOSTNAME}" =~ "thrift-server" ]]; then
@@ -69,13 +76,6 @@ data:
       exit 1
     fi
 
-    if [[ "${HOSTNAME}" =~ "spark-worker" ]]; then
-      echo 'Spark-Worker' > /hello.world
-      cp ${CONFIG_DIR}/start-spark-worker.sh $HADOOP_PREFIX/sbin/
-      cd $HADOOP_PREFIX/sbin
-      #chmod +x start-yarn-rm.sh
-      #./start-yarn-rm.sh
-    fi
 
     if [[ "${HOSTNAME}" =~ "yarn-rm" ]]; then
       echo 'Bob' > /hello.world
@@ -133,9 +133,12 @@ data:
 
   spark-defaults.conf: |
     spark.master local
-    spark.driver.memory     512m
-    spark.yarn.am.memory    512m
-    spark.executor.memory   512m
+    #spark.driver.memory     512m
+    #spark.yarn.am.memory    512m
+    #spark.executor.memory   512m
+    spark.driver.memory     1g
+    spark.yarn.am.memory    1g
+    spark.executor.memory   1g
     
     spark.sql.warehouse.dir  hdfs://{{ template "hadoop.fullname" . }}-hdfs-nn:9000/
     spark.eventLog.enabled  false
@@ -167,7 +170,7 @@ data:
       </property>
       <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://thadoop-mysql:3306/metastore_db?createDatabaseIfNotExist=true&amp;useSSL=false</value>
+        <value>jdbc:mysql://{{ .Release.Name }}-mysql:3306/metastore_db?createDatabaseIfNotExist=true&amp;useSSL=false</value>
         <description>the URL of the MySQL database</description>
       </property>
       <property>
@@ -209,7 +212,7 @@ data:
 
       <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://thadoop-hadoop-thrift-server:9083</value>
+        <value>thrift://{{ template "hadoop.fullname" . }}-thrift-server:9083</value>
         <description>IP address (or fully-qualified domain name) and port of the metastore host</description>
       </property>
       </configuration>
@@ -293,13 +296,27 @@ data:
       # Start Spark-Master
       echo "Starting Spark - Master"
       echo "MyRole Spark-Master" > /myrole.info
+      cd $SPARK_HOME/sbin
+      chmod +x ./start-master.sh
+      sleep 5
+      ./start-master.sh --host $(hostname) --port 7077
+      echo "Spark-Master started"
 
   start-spark-worker.sh: |
       #!/usr/bin/env bash
       set -e
-      # Start Spark-Master
+      # From HELM-Values
+      SPARK_MASTER_SERVICE_NAME="{{ template "hadoop.fullname" . }}-spark-master"
+      SPARK_MASTER_HOST=thadoop-hadoop-spark-master
+      SPARK_MASTER_SERVICE_PORT=7077
+      # Start Spark-Worker
       echo "Starting Spark - Worker"
       echo "MyRole Spark-Worker" > /myrole.info
+      cd $SPARK_HOME/sbin
+      chmod +x ./start-slave.sh
+      sleep 6
+      ./start-slave.sh $SPARK_MASTER_SERVICE_NAME:$SPARK_MASTER_SERVICE_PORT 
+      echo "Spark-Worker started"
 
   start-thrift-server.sh: |
       #!/usr/bin/env bash
@@ -307,7 +324,7 @@ data:
       # Start Thrift-server
       echo "Starting Thrift-server"
       echo "MyRole Thrift-server" > /myrole.thrift-server.info
-      echo "Initi Schema"
+      echo "Initi Schema" && sleep 10
       schematool -dbType mysql -initSchema 
       # https://unix.stackexchange.com/questions/82598/how-do-i-write-a-retry-logic-in-script-to-keep-retrying-to-run-it-upto-5-times
       # https://kubernetes.io/docs/concepts/workloads/pods/init-containers/

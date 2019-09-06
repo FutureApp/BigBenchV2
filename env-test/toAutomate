@@ -1,8 +1,17 @@
-schematool -dbType mysql -initSchema
-hive --service metastore
-
 spark-sql --master yarn --num-executors 6 --executor-memory 2G --executor-cores 1 --driver-memory 5G -f hivescript.hql
+spark-sql --master yarn --num-executors 1 --executor-memory 1G --executor-cores 1 --driver-memory 1G -f hivescript.hql
+spark-sql --master  spark://thadoop-hadoop-spark-master:7077 -f /bigbenchv2/queries/q16.hql
+schema/HiveCreateSchema.sql 
+spark-sql --master  spark://thadoop-hadoop-spark-master:7077 --executor-cores 14 --driver-memory 14G -e "show databases;" 
 
-save 
+spark-sql --master  spark://thadoop-hadoop-spark-master:7077 --executor-cores 14 --driver-memory 14G -e "show databases;" 
+spark-sql --master  spark://thadoop-hadoop-spark-master:7077 -f /bigbenchv2/queries/q16.hql
+                                                            hive -f schema/HiveCreateSchema.sql 
 
+spark-sql --master  spark://thadoop-hadoop-spark-master:7077 --executor-cores 4 --driver-memory 1G -f /bigbenchv2/schema/HiveCreateSchema.sql
+spark-sql --master  spark://thadoop-hadoop-spark-master:7077 -f /bigbenchv2/queries/q16.hql
+spark-sql --master spark://thadoop-hadoop-spark-master:7077  --num-executors 1 --executor-memory 1g --executor-cores 1 --driver-memory 1g -f /bigbenchv2/queries/q16.hql
+
+show databases;
+CopyData2HDFS
 alias >> ~/.bash_aliases
