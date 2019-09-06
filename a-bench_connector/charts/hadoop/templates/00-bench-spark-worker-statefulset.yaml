@@ -1,0 +1,81 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "hadoop.fullname" . }}-spark-worker
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/hadoop-configmap.yaml") . | sha256sum }}
+  labels:
+    app: {{ template "hadoop.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: spark-worker
+spec:
+  serviceName: {{ template "hadoop.fullname" . }}-spark-worker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "hadoop.name" . }}
+        release: {{ .Release.Name }}
+        component: spark-worker
+    spec:
+      affinity:
+        podAntiAffinity:
+        {{- if eq .Values.antiAffinity "hard" }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
+            labelSelector:
+              matchLabels:
+                app:  {{ template "hadoop.name" . }}
+                release: {{ .Release.Name | quote }}
+                component: spark-worker
+        {{- else if eq .Values.antiAffinity "soft" }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 5
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app:  {{ template "hadoop.name" . }}
+                  release: {{ .Release.Name | quote }}
+                  component: spark-worker
+        {{- end }}
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: spark-worker
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ .Values.image }}
+        env:
+          - name: SPARK_DAEMON_MEMORY
+            value: {{ default "1g" .Values.spark_worker.DaemonMemory | quote }}
+          - name: SPARK_WORKER_MEMORY
+            value: {{ default "1g" .Values.spark_worker.ExecutorMemory | quote }}
+          - name: SPARK_WORKER_WEBUI_PORT
+            value: {{ .Values.spark_worker.ContainerPort | quote }}
+        ports:
+            - containerPort: {{ .Values.spark_worker.ContainerPort }}
+        command:
+        - "/bin/bash"
+        - "/tmp/hadoop-config/bootstrap.sh"
+        - "-d"
+        resources:
+          requests:
+# Reads form default.yaml file and injects elements at point
+{{ toYaml .Values.spark_worker.resources | indent 10 }}
+        volumeMounts:
+        - name: hadoop-config
+          mountPath: /tmp/hadoop-config
+        - name: dfs
+          mountPath: /root/hdfs/namenode
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ template "hadoop.fullname" . }}
+      - name: dfs
+      {{- if .Values.persistence.nameNode.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "hadoop.fullname" . }}-spark-worker
+      {{- else }}        
+        emptyDir: {}
+      {{- end }}

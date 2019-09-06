@@ -20,10 +20,33 @@ abench:
         memory: "2048Mi"
         cpu: "1000m"
 
+spark_master: 
+  resources:
+      requests:
+        memory: "256Mi"
+        cpu: "10m"
+      limits:
+        memory: "2048Mi"
+        cpu: "1000m"
+  DaemonMemory: "1g"
+  ServicePort: "7077"
+  ContainerPort: "9005"
+
+spark_worker:
+  resources:
+      requests:
+        memory: "256Mi"
+        cpu: "10m"
+      limits:
+        memory: "2048Mi"
+        cpu: "1000m"
+  DaemonMemory: "1g"
+  ExecutorMemory: "1g"
+  ContainerPort: 9006
+
 hdfs:
   nameNode:
     pdbMinAvailable: 1
-
     resources:
       requests:
         memory: "256Mi"
@@ -34,9 +57,7 @@ hdfs:
 
   dataNode:
     replicas: 1
-
     pdbMinAvailable: 1
-
     resources:
       requests:
         memory: "256Mi"

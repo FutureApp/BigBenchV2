@@ -60,8 +60,17 @@ data:
       #./start-yarn-rm.sh
     fi
 
-    if [[ "${HOSTNAME}" =~ "spark-worker" ]]; then
+    if [[ "${HOSTNAME}" =~ "thrift-server" ]]; then
       echo 'Bob' > /hello.world
+      cp ${CONFIG_DIR}/start-thrift-server.sh $HADOOP_PREFIX/sbin/
+      cd $HADOOP_PREFIX/sbin
+      chmod +x start-thrift-server.sh
+      ./start-thrift-server.sh
+      exit 1
+    fi
+
+    if [[ "${HOSTNAME}" =~ "spark-worker" ]]; then
+      echo 'Spark-Worker' > /hello.world
       cp ${CONFIG_DIR}/start-spark-worker.sh $HADOOP_PREFIX/sbin/
       cd $HADOOP_PREFIX/sbin
       #chmod +x start-yarn-rm.sh
@@ -287,10 +296,24 @@ data:
 
   start-spark-worker.sh: |
       #!/usr/bin/env bash
-
+      set -e
       # Start Spark-Master
       echo "Starting Spark - Worker"
       echo "MyRole Spark-Worker" > /myrole.info
+
+  start-thrift-server.sh: |
+      #!/usr/bin/env bash
+      set -e
+      # Start Thrift-server
+      echo "Starting Thrift-server"
+      echo "MyRole Thrift-server" > /myrole.thrift-server.info
+      echo "Initi Schema"
+      schematool -dbType mysql -initSchema 
+      # https://unix.stackexchange.com/questions/82598/how-do-i-write-a-retry-logic-in-script-to-keep-retrying-to-run-it-upto-5-times
+      # https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+      #for i in {1..10}; do (echo "Trying to init schema [$i]" && schematool -dbType mysql -initSchema ) && break || sleep 1; done
+      echo "Starting Thrift-Server / service"
+      hive --service metastore
 
   start-yarn-nm.sh: |
     #!/usr/bin/env bash

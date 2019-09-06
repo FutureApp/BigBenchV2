@@ -1,11 +1,6 @@
 schematool -dbType mysql -initSchema
 hive --service metastore
 
-
-helm install --name sql-mysql \
-    --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
-    stable/mysql
-
 spark-sql --master yarn --num-executors 6 --executor-memory 2G --executor-cores 1 --driver-memory 5G -f hivescript.hql
 
 save 

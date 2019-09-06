@@ -1,0 +1,83 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "hadoop.fullname" . }}-spark-master
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/hadoop-configmap.yaml") . | sha256sum }}
+  labels:
+    app: {{ template "hadoop.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: spark-master
+spec:
+  serviceName: {{ template "hadoop.fullname" . }}-spark-master
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "hadoop.name" . }}
+        release: {{ .Release.Name }}
+        component: spark-master
+    spec:
+      affinity:
+        podAntiAffinity:
+        {{- if eq .Values.antiAffinity "hard" }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
+            labelSelector:
+              matchLabels:
+                app:  {{ template "hadoop.name" . }}
+                release: {{ .Release.Name | quote }}
+                component: spark-master
+        {{- else if eq .Values.antiAffinity "soft" }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 5
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app:  {{ template "hadoop.name" . }}
+                  release: {{ .Release.Name | quote }}
+                  component: spark-master
+        {{- end }}
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: spark-master
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ .Values.image }}
+        env:
+          - name: SPARK_DAEMON_MEMORY
+            value: {{ default "1g" .Values.spark_master.DaemonMemory | quote }}
+          - name: SPARK_MASTER_HOST
+            value: {{ template "hadoop.fullname" . }}-spark-master
+          - name: SPARK_MASTER_PORT
+            value: {{ .Values.spark_master.ServicePort | quote }}
+          - name: SPARK_MASTER_WEBUI_PORT
+            value: {{ .Values.spark_master.ContainerPort | quote }}
+        ports:
+            - containerPort: {{ .Values.spark_master.ContainerPort }}
+        command:
+        - "/bin/bash"
+        - "/tmp/hadoop-config/bootstrap.sh"
+        - "-d"
+        resources:
+          requests:
+# Reads form default.yaml file and injects elements at point
+{{ toYaml .Values.spark_master.resources | indent 10 }}
+        volumeMounts:
+        - name: hadoop-config
+          mountPath: /tmp/hadoop-config
+        - name: dfs
+          mountPath: /root/hdfs/namenode
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ template "hadoop.fullname" . }}
+      - name: dfs
+      {{- if .Values.persistence.nameNode.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "hadoop.fullname" . }}-spark-master
+      {{- else }}        
+        emptyDir: {}
+      {{- end }}

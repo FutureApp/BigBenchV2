@@ -1,3 +1,4 @@
+# Allows to use some special-Vars at run-time.
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.

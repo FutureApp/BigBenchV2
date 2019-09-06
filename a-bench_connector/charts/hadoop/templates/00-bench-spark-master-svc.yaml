@@ -1,0 +1,25 @@
+# A headless service to create DNS records
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "hadoop.fullname" . }}-spark-master
+  labels:
+    app: {{ template "hadoop.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: spark-master
+spec:
+  ports:
+  - name: spark-master
+    port: {{ .Values.spark_master.ServicePort }}
+  - name: dfs
+    port: 9000
+    protocol: TCP
+  - name: webhdfs
+    port: 50075
+  clusterIP: None
+  selector:
+    app: {{ template "hadoop.name" . }}
+    release: {{ .Release.Name }}
+    component: spark-master
