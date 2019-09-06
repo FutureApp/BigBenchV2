@@ -9,6 +9,9 @@ hadoopVersion: 2.7.3
 # Select antiAffinity as either hard or soft, default is soft
 antiAffinity: "soft"
 
+mysql: 
+  name: hello-world-sql
+  
 abench:
   driver:
     pdbMinAvailable: 1
