@@ -40,6 +40,7 @@ spark_master:
   ContainerPort: "9005"
 
 spark_worker:
+  replicas: 2
   resources:
       requests:
         memory: "1G"

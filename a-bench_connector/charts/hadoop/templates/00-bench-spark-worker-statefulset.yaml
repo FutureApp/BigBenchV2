@@ -12,7 +12,7 @@ metadata:
     component: spark-worker
 spec:
   serviceName: {{ template "hadoop.fullname" . }}-spark-worker
-  replicas: 1
+  replicas: {{ .Values.spark_worker.replicas }}
   template:
     metadata:
       labels:

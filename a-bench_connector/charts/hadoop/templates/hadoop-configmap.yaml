@@ -132,7 +132,7 @@ data:
     </configuration>
 
   spark-defaults.conf: |
-    spark.master local
+    #spark.master local
     #spark.driver.memory     512m
     #spark.yarn.am.memory    512m
     #spark.executor.memory   512m
@@ -324,7 +324,7 @@ data:
       # Start Thrift-server
       echo "Starting Thrift-server"
       echo "MyRole Thrift-server" > /myrole.thrift-server.info
-      echo "Initi Schema" && sleep 10
+      echo "Initi Schema" && sleep 20
       schematool -dbType mysql -initSchema 
       # https://unix.stackexchange.com/questions/82598/how-do-i-write-a-retry-logic-in-script-to-keep-retrying-to-run-it-upto-5-times
       # https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
