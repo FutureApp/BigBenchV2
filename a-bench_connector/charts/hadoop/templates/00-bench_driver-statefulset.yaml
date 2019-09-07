@@ -12,7 +12,7 @@ metadata:
     component: bench-driver
 spec:
   serviceName: {{ template "hadoop.fullname" . }}-bench-driver
-  replicas: 1
+  replicas: {{ .Values.abench.replicas }}
   template:
     metadata:
       labels:

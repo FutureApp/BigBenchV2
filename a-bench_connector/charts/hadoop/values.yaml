@@ -17,6 +17,7 @@ mysql:
   mysqlDatabase: "metastore_db"
   
 abench:
+  replicas: 1
   driver:
     pdbMinAvailable: 1
     resources:
@@ -28,6 +29,7 @@ abench:
         cpu: "1000m"
 
 spark_master: 
+  replicas: 1
   resources:
       requests:
         memory: "256Mi"

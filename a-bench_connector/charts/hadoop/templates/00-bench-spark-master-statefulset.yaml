@@ -12,7 +12,7 @@ metadata:
     component: spark-master
 spec:
   serviceName: {{ template "hadoop.fullname" . }}-spark-master
-  replicas: 1
+  replicas: {{ .Values.spark_master.replicas }}
   template:
     metadata:
       labels:
