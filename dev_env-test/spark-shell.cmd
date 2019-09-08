@@ -7,6 +7,7 @@ hdfs dfs -put alice.txt /inputs
 
 
 // ------------------------- Into Sparkshell ------------
+spark-shell
 // Code to insert into spark-shell
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._

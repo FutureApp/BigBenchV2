@@ -88,7 +88,7 @@ case  $var  in
 ;;
 #----------------------------------------------------------------------------[ Experiment-Functions ]--
 (cus_build) #               -- Procedure to build your kube infrastructure (docker). via custom script.
-    echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_build $NC"
+    echo -e "$bench_tag System is building the infrastructure of the experiment.     | $RR cus_build $NC"
     
     eval $(minikube docker-env)
     cd $home_dockerfile
@@ -97,18 +97,20 @@ case  $var  in
 (cus_deploy) #              -- Procedure to deploy your benchmark on kubernetes.     via custom script.
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_deploy $NC"
     
-    helm delete --purge sql-mysql
     util_sleep 30
-    helm install --wait --timeout 600 --name sql-mysql \
-    --set mysqlRootPassword=a,mysqlUser=hive,mysqlPassword=phive,mysqlDatabase=metastore_db \
-    stable/mysql
-
     nameOfHadoopCluster='thadoop'
     cd $home_charts
     helm delete  --purge $nameOfHadoopCluster
-    helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop
+    helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
+    --set spark_master.replicas=0,spark_worker.replicas=0 || \
+    ( 
+        echo "Something went wrong. System will wait and then retry the procedure again" &&\
+        util_sleep 60;
+        helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
+        --set spark_master.replicas=0,spark_worker.replicas=0 
+    )
+
     echo -e  "${bench_tag} hadoop cluster started and named as < $nameOfHadoopCluster > ..."
-    util_sleep 30
 ;;
 (cus_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
     echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare $NC"
@@ -118,8 +120,6 @@ case  $var  in
                                                             echo Copying benchmark-data to HDFS         && \
     														bash ./schema/CopyData2HDFS.sh              && \
                                                             echo Copying benchmark-data was successfull && \
-                                                            echo Starting to initialize db-schema       && \
-    														schematool -dbType mysql -initSchema 
                                                         "  
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             echo Creating BigBenchV2-DB                 && \
@@ -165,9 +165,6 @@ case  $var  in
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
     exutils_dynmic_helpByCodeParse
-;;
-(check_query_number) # --- private
-    echo "Calling check"
 ;;
 esac     
 done

@@ -13,9 +13,9 @@ source $exutils
 
 
 bench_tag=${LB}[A-Bench]${NC}
-ex_tag="experiment#01"
+ex_tag=${EX_TAG:-DefaultExTag}
 
-loc_des_container="thadoop-hadoop-bench-driver-0"
+loc_des_container="thadoop-hadoop-spark-master-0"
 
 # all functions calls are indicated by prefix <util_xxx>
 # Provides some additional and nice features.
@@ -30,6 +30,16 @@ home_dockerfile='../../images/hive'
 
 container_home__bench='/bigbenchv2'
 
+function check_query_number () {
+    queryLikeToRun=$1
+    if [ -z "$queryLikeToRun" ]; then
+        echo "Error, you called the experiment without defining which experiment you would like to executes."; \
+        exit 1
+    fi
+    
+    echo "$queryLikeToRun"
+}
+
 
 if [[ $# -eq 0 ]] ; then
     ./$0 --help
@@ -42,8 +52,19 @@ case  $var  in
 
 #--------------------------------------------------------------------------------------[ Experiment ]--
 (run_ex) #                  -- ProcFedure to run the experiment described by the steps below. 
+    # This is a simple skeleton to run your experiment in a normed order.
+    # Normaly, there is nothing to change.
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
+    
+    # Checks if a query is given at runtime and passed as an argument to this file
+    queryLikeToRun=$2
+    if [ -z "$queryLikeToRun" ]; then
+        echo "Error, you called the experiment without defining which experiment you would like to executes."; \
+        exit 1
+    fi
+    echo "Query-Mapper has detected: $queryLikeToRun"
+
     ./$0 cus_build
     util_sleep 10
     ./$0 cus_deploy
@@ -52,13 +73,13 @@ case  $var  in
     util_sleep 10
 
     start_time=$(exutils_UTC_TimestampInNanos)
-    ./$0 cus_workload
+    ./$0 cus_workload $queryLikeToRun
     sleep 30
     end_time=$(exutils_UTC_TimestampInNanos)
     util_sleep 10
 
-    pathToCollectDir=$(util_relResultDirPath $home_framework)
-    exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir $ex_tag
+    pathToCollectDir=$(util_relResultDirPath $home_framework)_${ex_tag}_${queryLikeToRun} # formate: date_tag_queryNumber
+    exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir ${ex_tag}_${queryLikeToRun}
     ./$0 cus_collect $start_time $end_time $pathToCollectDir $ex_tag
 
     util_sleep 10
@@ -71,47 +92,49 @@ case  $var  in
     
     eval $(minikube docker-env)
     cd $home_dockerfile
-    # docker build -t thadoop .
-    #docker pull jwgumcz/thadoop:latest
+    # docker build -t jwgumcz/thadoop .
 ;;
 (cus_deploy) #              -- Procedure to deploy your benchmark on kubernetes.     via custom script.
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_deploy $NC"
     
+    util_sleep 30
     nameOfHadoopCluster='thadoop'
     cd $home_charts
-    helm delete     --purge $nameOfHadoopCluster && util_sleep 30
-    helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
-    --set spark_master.replicas=0,spark_worker.replicas=0 || \
-    (   echo -e "$bench_tag Something went wrong. System will wait and then it will retry the procedure again." &&\
-        helm delete     --purge $nameOfHadoopCluster
+    helm delete  --purge $nameOfHadoopCluster || echo "Nothing to clean. The requested Enviroment will start now."
+    echo "System-enviroment is booting now"
+    helm install --wait --timeout 600 --name $nameOfHadoopCluster hadoop \
+    --set spark_master.replicas=1,spark_worker.replicas=1 || \
+    ( 
+        echo "Something went wrong. The system will stop the execution for some time. After that the system will retry the procedure for a second time" &&\
+        helm del --purge $nameOfHadoopCluster;
         util_sleep 60;
-        helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
-        --set spark_master.replicas=0,spark_worker.replicas=0 
-    ) || (echo "Probelm persits. Execution will stop now" && exit 1)
-    echo -e  "${bench_tag} hadoop cluster started and named as < $nameOfHadoopCluster > ..."
-    echo  -e "${bench_tag} Waiting for stable system."
-    util_sleep 30
+        helm install --wait --timeout 600 --name $nameOfHadoopCluster hadoop \
+        --set spark_master.replicas=1,spark_worker.replicas=1 
+    )
+
+    echo -e  "${bench_tag} Enviroment named as < $nameOfHadoopCluster > is starting now ..."
 ;;
 (cus_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
     echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare $NC"
     
     kubectl cp $home_benchmark $loc_des_container:/
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
-                                                            echo 'Copying benchmark-data to HDFS'       && \
+                                                            echo Copying benchmark-data to HDFS         && \
     														bash ./schema/CopyData2HDFS.sh              && \
-                                                            echo Copying benchmark-data was successfull 
-                                                        "  
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
-                                                            echo 'Creating BigBenchV2-DB'               && \
-                                                            hive -f ./schema/HiveCreateSchema.sql 
-                                                        "
+                                                            echo Copying benchmark-data was successfull"
+
+    kubectl exec -ti $loc_des_container -- bash -c      "cd $container_home__bench                   && \
+                                                         echo Creating BigBenchV2-DB                 && \
+    spark-sql --master  spark://thadoop-hadoop-spark-master:7077 -f $container_home__bench/schema/HiveCreateSchema.sql" 
 ;;
 (cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
+    query_number=$2
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
+    query_to_exec="$container_home__bench/queries/$query_number.hql"
     
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
-                                                            hive -f ./queries/q16.hql 
-                                                        "   
+    echo -e "$bench_tag Running  query $query_to_exec.                                            "
+    kubectl exec -ti $loc_des_container -- bash -c      "cd $container_home__bench  && \
+    spark-sql --master  spark://thadoop-hadoop-spark-master:7077 -f $query_to_exec"   
 ;;
 (cus_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
     echo -e "$bench_tag Downloading the results of the experiment.          | $RR cus_collect $NC"

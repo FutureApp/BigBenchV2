@@ -15,8 +15,7 @@ source $exutils
 bench_tag=${LB}[A-Bench]${NC}
 ex_tag="experiment#01"
 
-loc_des_container="thadoop-hadoop-bench-driver-0"
-
+loc_des_container="thadoop-hadoop-spark-worker-0"
 # all functions calls are indicated by prefix <util_xxx>
 # Provides some additional and nice features.
 source ../../../../../dir_bench/lib_bench/shell/util.sh
@@ -53,7 +52,7 @@ case  $var  in
 
     start_time=$(exutils_UTC_TimestampInNanos)
     ./$0 cus_workload
-    sleep 30
+    util_sleep 30
     end_time=$(exutils_UTC_TimestampInNanos)
     util_sleep 10
 
@@ -79,39 +78,43 @@ case  $var  in
     
     nameOfHadoopCluster='thadoop'
     cd $home_charts
-    helm delete     --purge $nameOfHadoopCluster && util_sleep 30
+    helm delete  --purge $nameOfHadoopCluster
     helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
-    --set spark_master.replicas=0,spark_worker.replicas=0 || \
-    (   echo -e "$bench_tag Something went wrong. System will wait and then it will retry the procedure again." &&\
-        helm delete     --purge $nameOfHadoopCluster
+    --set spark_master.replicas=1,spark_worker.replicas=1 || \
+    (   helm del --purge $nameOfHadoopCluster &&\
+        echo -e "$bench_tag Something went wrong. System will wait and then it will retry the procedure again." &&\
         util_sleep 60;
         helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
-        --set spark_master.replicas=0,spark_worker.replicas=0 
-    ) || (echo "Probelm persits. Execution will stop now" && exit 1)
+        --set spark_master.replicas=1,spark_worker.replicas=1
+    ) || (echo "Problem is persisting. Execution will stop now" && exit 1)
     echo -e  "${bench_tag} hadoop cluster started and named as < $nameOfHadoopCluster > ..."
-    echo  -e "${bench_tag} Waiting for stable system."
     util_sleep 30
 ;;
 (cus_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
     echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare $NC"
     
     kubectl cp $home_benchmark $loc_des_container:/
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
-                                                            echo 'Copying benchmark-data to HDFS'       && \
-    														bash ./schema/CopyData2HDFS.sh              && \
-                                                            echo Copying benchmark-data was successfull 
-                                                        "  
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
-                                                            echo 'Creating BigBenchV2-DB'               && \
-                                                            hive -f ./schema/HiveCreateSchema.sql 
-                                                        "
+    kubectl exec -ti $loc_des_container -- bash -c\
+        "   cd $container_home__bench                   && \
+            echo 'Copying benchmark-data to HDFS'       && \
+            bash ./schema/CopyData2HDFS.sh              && \
+            echo Copying benchmark-data was successfull 
+        "  
+    kubectl exec -ti $loc_des_container -- bash -c\
+        "   cd $container_home__bench                                       && \
+            echo 'Creating BigBenchV2-DB'                                   && \
+            spark-sql --master  spark://thadoop-hadoop-spark-master:7077 \
+            -f /bigbenchv2/schema/HiveCreateSchema.sql
+        "
 ;;
 (cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
     
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
-                                                            hive -f ./queries/q16.hql 
-                                                        "   
+    kubectl exec -ti $loc_des_container -- bash -c\
+        "   cd $container_home__bench                    && \
+            spark-sql --master  spark://thadoop-hadoop-spark-master:7077 \
+            -f /bigbenchv2/queries/q16.hql
+        "   
 ;;
 (cus_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
     echo -e "$bench_tag Downloading the results of the experiment.          | $RR cus_collect $NC"
