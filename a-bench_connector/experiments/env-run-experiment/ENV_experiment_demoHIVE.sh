@@ -104,8 +104,9 @@ case  $var  in
     helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
     --set spark_master.replicas=0,spark_worker.replicas=0 || \
     ( 
+        helm del --purge $nameOfHadoopCluster
         echo "Something went wrong. System will wait and then retry the procedure again" &&\
-        util_sleep 60;
+        util_sleep 120;
         helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
         --set spark_master.replicas=0,spark_worker.replicas=0 
     )
@@ -129,7 +130,7 @@ case  $var  in
 (cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
     query_number=$2
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
-    query_to_exec="queries/$query_number".hql 
+    query_to_exec="$container_home__bench/queries/$query_number.hql" 
     
     echo -e "$bench_tag Running  query $query_to_exec.                                            "
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \

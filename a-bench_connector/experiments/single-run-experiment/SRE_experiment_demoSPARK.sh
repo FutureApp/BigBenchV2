@@ -83,7 +83,7 @@ case  $var  in
     --set spark_master.replicas=1,spark_worker.replicas=1 || \
     (   helm del --purge $nameOfHadoopCluster &&\
         echo -e "$bench_tag Something went wrong. System will wait and then it will retry the procedure again." &&\
-        util_sleep 60;
+        util_sleep 120
         helm install --wait --timeout 600 --name  $nameOfHadoopCluster hadoop \
         --set spark_master.replicas=1,spark_worker.replicas=1
     ) || (echo "Problem is persisting. Execution will stop now" && exit 1)
