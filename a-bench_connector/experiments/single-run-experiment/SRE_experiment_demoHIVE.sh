@@ -132,12 +132,11 @@ case  $var  in
 ;;
 (cus_clean) #          -- Procedure to clean up the enviroment if needed        via custom script.
     echo -e "$bench_tag Cleaning the infrastructure.                        | $RR cus_clean $NC"
-#    //TODO Your code comes here 
+#   //TODO Your code comes here 
 ;;
 (cus_finish) #        -- Procedure to signal that the experiment has finished. via custom script.
     echo -e "$bench_tag Experiment finished.                                | $RR cus_finish $NC"
-
-#    //TODO Your code comes here 
+#   //TODO Your code comes here 
 ;;
 #---------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
