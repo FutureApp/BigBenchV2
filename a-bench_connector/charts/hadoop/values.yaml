@@ -2,7 +2,7 @@
 # See this repo for image build details: 
 # https://github.com/FutureApp/bigbenchv2/blob/master/a-bench_connector/images/hive/Dockerfile
 # Code based on: https://github.com/helm/charts/blob/master/stable/hadoop/values.yaml 
-image: jwgumcz/bench
+image: jwgumcz/abench_bbv2
 imagePullPolicy: IfNotPresent
 
 # The version of the hadoop libraries being used in the image.

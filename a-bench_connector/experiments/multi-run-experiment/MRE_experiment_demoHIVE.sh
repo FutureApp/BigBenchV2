@@ -60,7 +60,7 @@ case  $var  in
 
     eval $(minikube docker-env)
     cd $home_dockerfile
-    docker build -t thadoop .
+    docker build -t jwgumcz/abench_bbv2 .
 ;;
 (MRE_deploy) #              -- Procedure to deploy your benchmark on kubernetes.     via custom script.
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR MRE_deploy $NC"
