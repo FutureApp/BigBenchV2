@@ -81,7 +81,7 @@ RUN \
 RUN \
   cd / &&\
   git clone "https://github.com/FutureApp/bigbenchv2.git" && \
-  echo "Installation of BigBenchV2 - Master - Branch completed!!"
+  echo "Installation of BigBenchV2 - Master - Branch completed!!!"
 # ----------------------------------------------------------- [copy & expose] --
   
 
