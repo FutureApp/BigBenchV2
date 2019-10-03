@@ -121,7 +121,7 @@ case  $var  in
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             echo Copying benchmark-data to HDFS         && \
     														bash ./schema/CopyData2HDFS.sh              && \
-                                                            echo Copying benchmark-data was successfull && \
+                                                            echo Copying benchmark-data was successfull 
                                                         "  
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             echo Creating BigBenchV2-DB                 && \
