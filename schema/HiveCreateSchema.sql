@@ -37,7 +37,6 @@ CREATE EXTERNAL TABLE ${hiveconf:customersTableName}${hiveconf:temporaryTableSuf
 
 !echo Load text data into ${hiveconf:tableFormat} table: ${hiveconf:customersTableName};
 CREATE TABLE IF NOT EXISTS ${hiveconf:customersTableName}
-STORED AS ${hiveconf:tableFormat}
 AS
 SELECT * FROM ${hiveconf:customersTableName}${hiveconf:temporaryTableSuffix}
 ;
@@ -64,7 +63,6 @@ CREATE EXTERNAL TABLE ${hiveconf:itemsTableName}${hiveconf:temporaryTableSuffix}
 
 !echo Load text data into ${hiveconf:tableFormat} table: ${hiveconf:itemsTableName};
 CREATE TABLE IF NOT EXISTS ${hiveconf:itemsTableName}
-STORED AS ${hiveconf:tableFormat}
 AS
 SELECT * FROM ${hiveconf:itemsTableName}${hiveconf:temporaryTableSuffix}
 ;
@@ -89,7 +87,6 @@ CREATE EXTERNAL TABLE ${hiveconf:reviewsTableName}${hiveconf:temporaryTableSuffi
 
 !echo Load text data into ${hiveconf:tableFormat} table: ${hiveconf:reviewsTableName};
 CREATE TABLE IF NOT EXISTS ${hiveconf:reviewsTableName}
-STORED AS ${hiveconf:tableFormat}
 AS
 SELECT * FROM ${hiveconf:reviewsTableName}${hiveconf:temporaryTableSuffix}
 ;
@@ -111,7 +108,6 @@ CREATE EXTERNAL TABLE ${hiveconf:web_pagesTableName}${hiveconf:temporaryTableSuf
 
 !echo Load text data into ${hiveconf:tableFormat} table: ${hiveconf:web_pagesTableName};
 CREATE TABLE IF NOT EXISTS ${hiveconf:web_pagesTableName}
-STORED AS ${hiveconf:tableFormat}
 AS
 SELECT * FROM ${hiveconf:web_pagesTableName}${hiveconf:temporaryTableSuffix}
 ;
@@ -136,7 +132,6 @@ CREATE EXTERNAL TABLE ${hiveconf:web_salesTableName}${hiveconf:temporaryTableSuf
 
 !echo Load text data into ${hiveconf:tableFormat} table: ${hiveconf:web_salesTableName};
 CREATE TABLE IF NOT EXISTS ${hiveconf:web_salesTableName}
-STORED AS ${hiveconf:tableFormat}
 AS
 SELECT * FROM ${hiveconf:web_salesTableName}${hiveconf:temporaryTableSuffix}
 ;
@@ -161,7 +156,6 @@ CREATE EXTERNAL TABLE ${hiveconf:store_salesTableName}${hiveconf:temporaryTableS
 
 !echo Load text data into ${hiveconf:tableFormat} table: ${hiveconf:store_salesTableName};
 CREATE TABLE IF NOT EXISTS ${hiveconf:store_salesTableName}
-STORED AS ${hiveconf:tableFormat}
 AS
 SELECT * FROM ${hiveconf:store_salesTableName}${hiveconf:temporaryTableSuffix}
 ;
@@ -182,7 +176,6 @@ CREATE EXTERNAL TABLE ${hiveconf:storesTableName}${hiveconf:temporaryTableSuffix
 
 !echo Load text data into ${hiveconf:tableFormat} table: ${hiveconf:storesTableName};
 CREATE TABLE IF NOT EXISTS ${hiveconf:storesTableName}
-STORED AS ${hiveconf:tableFormat}
 AS
 SELECT * FROM ${hiveconf:storesTableName}${hiveconf:temporaryTableSuffix}
 ;
