@@ -76,7 +76,7 @@ case  $var  in
                                                         "
     kubectl cp $loc_des_container:$container_home__bench/results $exportDirectory
     location=$(readlink -f $exportDirectory)
-    echo -e "$bench_tag Download complete. Your data are located under <${LB}$location${NC}>"
+    echo -e "$bench_tag Download complete. The data can be found at <${LB}$location${NC}>"
 ;;
 (mSRE_clean) #               -- Procedure to clean up the enviroment if needed        via custom script.
     echo -e "$bench_tag Cleaning the infrastructure.                        | $RR mSRE_clean $NC"
