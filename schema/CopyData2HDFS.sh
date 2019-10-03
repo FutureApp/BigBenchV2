@@ -6,7 +6,7 @@ hadoop fs -mkdir -p /bigbenchv2/data/items
 hadoop fs -put $home_dataset/items.tbl /bigbenchv2/data/items
 
 hadoop fs -mkdir -p /bigbenchv2/data/reviews
-hadoop fs -put $home_dataset/reviews.tbl /bigbenchv2/data/reviews
+hadoop fs -put $home_dataset/product_reviews.tbl /bigbenchv2/data/product_reviews
 
 hadoop fs -mkdir -p /bigbenchv2/data/web_pages
 hadoop fs -put $home_dataset/web_pages.tbl /bigbenchv2/data/web_pages
