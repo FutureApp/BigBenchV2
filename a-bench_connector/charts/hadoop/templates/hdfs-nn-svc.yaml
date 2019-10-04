@@ -10,13 +10,13 @@ metadata:
     heritage: {{ .Release.Service }}
     component: hdfs-nn
 spec:
+  type: NodePort
   ports:
   - name: dfs
     port: 9000
     protocol: TCP
   - name: webhdfs
     port: 50070
-  clusterIP: None
   selector:
     app: {{ template "hadoop.name" . }}
     release: {{ .Release.Name }}

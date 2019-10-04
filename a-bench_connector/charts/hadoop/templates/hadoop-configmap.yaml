@@ -416,6 +416,19 @@ data:
         <value>{{ template "hadoop.fullname" . }}-yarn-rm</value>
       </property>
 
+      <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>yarn.nodemanager.remote-app-log-dir</name>
+        <value>/app-logs</value>
+      </property>
+      <property>
+        <name>yarn.nodemanager.remote-app-log-dir-suffix</name>
+        <value>logs</value>
+      </property>
+
       <!-- Bind to all interfaces -->
       <property>
         <name>yarn.resourcemanager.bind-host</name>
