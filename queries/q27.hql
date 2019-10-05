@@ -32,13 +32,10 @@ STORED AS TEXTFILE;
 -- the real query part
 INSERT INTO TABLE ${hiveconf:RESULT_TABLE}
 SELECT find_company(pr_review_id, pr_item_id, pr_content) AS (pr_review_id, pr_item_id, company_name, review_sentence)
-FROM (
-  SELECT 
-	pr_review_id,
-	pr_item_id,
-	pr_content
-  FROM 
-	product_reviews
-  WHERE pr_item_id = ${hiveconf:q27_pr_item_id}
-) subtable
+FROM (SELECT 
+  pr_review_id, 
+  pr_item_id, 
+  pr_content 
+  FROM product_reviews 
+  WHERE pr_item_id = ${hiveconf:q27_pr_item_id})subtable
 ;
