@@ -68,7 +68,7 @@ case  $var  in
     ./$0 cus_build
     util_sleep 10
     ./$0 cus_deploy
-    util_sleep 60
+    util_sleep 120
     ./$0 cus_prepare
     util_sleep 10
 
@@ -125,7 +125,7 @@ case  $var  in
                                                         "  
     kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                   && \
                                                             echo Creating BigBenchV2-DB                 && \
-                                                            hive -f schema/HiveCreateSchema.sql 
+                                                            hive -f ./schema/HiveCreateSchema.sql 
                                                         "
 ;;
 (cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
