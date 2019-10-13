@@ -1,0 +1,7 @@
+Die Realisierung dieses Charts basiert auf diesem Chart 
+https://github.com/helm/charts/tree/master/stable/hadoop
+
+Es wurden die entsprechenden und benötigten Strukturen adaptiert und um jene erweitert, 
+die zur Umsetzung des BBV2-Moduls benötigt werden. Eine genaue Differenzierung der erbrachten Inhalte zu 
+jenen die bereits vorstehend waren, kann mit einem Diff - Tool entsprechend eingesehen werden.
+ 
