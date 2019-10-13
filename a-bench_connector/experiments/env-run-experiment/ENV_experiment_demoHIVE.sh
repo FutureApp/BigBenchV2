@@ -133,8 +133,8 @@ case  $var  in
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
     query_to_exec="$container_home__bench/queries/$query_number.hql" 
     
-    echo -e "$bench_tag Running  query $query_to_exec.                                            "
-    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench                    && \
+    echo -e "$bench_tag Running  query $query_to_exec."
+    kubectl exec -ti $loc_des_container -- bash -c      "   cd $container_home__bench  &&\
                                                             hive -f $query_to_exec 
                                                         "   
 ;;
