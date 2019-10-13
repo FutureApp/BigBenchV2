@@ -68,9 +68,9 @@ case  $var  in
     ./$0 cus_build
     util_sleep 10
     ./$0 cus_deploy
-    util_sleep 60
+    util_sleep 160
     ./$0 cus_prepare
-    util_sleep 10
+    util_sleep 30
 
     start_time=$(exutils_UTC_TimestampInNanos)
     ./$0 cus_workload $queryLikeToRun
